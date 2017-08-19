@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>文件服务器</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/fileinput.min.css">
+    <script src="./js/jquery-3.1.1.min.js"></script>
+    <script src="./js/angular.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/fileinput.min.js"></script>
+    <script src="./js/fileinput.zh.js"></script>
+    <script src="./js/myApp.js"></script>
+</head>
+<body>
+<div ng-app="myApp" ng-controller="site">
+    <div class="input-group" style="width: 40%;margin-left: 10px;margin-top: 10px">
+        <span class="input-group-addon">路径</span>
+        <input type="text" class="form-control" ng-model="url"
+               ng-keyup="enterEvent($event)">
+    </div>
+    <div style="width: 40%;margin-left: 10px;margin-top: 10px">
+        <input id="fileUpload" type="file" class="file-loading" multiple="multiple"/>
+    </div>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>名称</th>
+            <th>操作</th>
+            <th>大小</th>
+            <th>修改日期</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="f in files" on-finish-render-filters>
+            <td ng-if="f.file"><span class="glyphicon glyphicon-file"></span><span>{{ f.name }}</span></td>
+            <td ng-if="!f.file" ng-dblclick="intoDirectory(f)"><span class="glyphicon glyphicon-folder-open"></span>
+                <span>{{ f.name }}</span>
+            </td>
+            <td>
+                <button ng-if="f.file" type="button" class="btn btn-default btn-sm" ng-click="preview(f.name)"><span
+                        class="glyphicon glyphicon-search"></span> 预览
+                </button>
+                <button ng-if="f.file" type="button" class="btn btn-default btn-sm" ng-click="download(f.name)"><span
+                        class="glyphicon glyphicon-download-alt"></span> 下载
+                </button>
+                <button ng-if="!f.file && f.name != '../'" type="button" class="btn btn-default btn-sm"
+                        ng-click="download(f.name)"><span
+                        class="glyphicon glyphicon-download-alt"></span> 压缩下载
+                </button>
+            </td>
+            <td>{{ f.displaySize }}</td>
+            <td>{{ f.lastModified }}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
