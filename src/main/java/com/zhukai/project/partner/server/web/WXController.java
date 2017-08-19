@@ -1,30 +1,26 @@
 package com.zhukai.project.partner.server.web;
 
-import static com.zhukai.project.partner.server.WXConstants.*;
-
-import java.io.*;
-import java.net.URLEncoder;
-import java.util.Base64;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.zhukai.framework.fast.rest.FastRestApplication;
 import com.zhukai.framework.fast.rest.annotation.core.Autowired;
 import com.zhukai.framework.fast.rest.annotation.web.*;
-import com.zhukai.framework.fast.rest.common.HttpHeaderType;
 import com.zhukai.framework.fast.rest.common.MultipartFile;
 import com.zhukai.framework.fast.rest.common.RequestType;
 import com.zhukai.project.partner.server.schedule.WXBatcher;
 import com.zhukai.project.partner.server.util.RestClientException;
 import com.zhukai.project.partner.server.util.RestClientUtil;
 import com.zhukai.project.partner.server.wrapper.RestResult;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.net.URLEncoder;
+import java.util.Base64;
+
+import static com.zhukai.project.partner.server.WXConstants.*;
 
 @RestController
 @RequestMapping("/wx")
@@ -46,11 +42,7 @@ public class WXController {
 	public JSONObject robot(@RequestBody JSONObject body) throws RestClientException, IOException {
 		logger.info("{} : {}", body.getString("username"), body.getString("info"));
 		body.put("key", TL_API_KEY);
-		HttpPost post = new HttpPost(TL_API_URL);
-		post.setHeader(HttpHeaderType.CONTENT_TYPE, "application/json;charset:utf-8");
-		StringEntity entity = new StringEntity(body.toString(), "utf-8");
-		post.setEntity(entity);
-		JSONObject result = RestClientUtil.executeAsJson(post);
+		JSONObject result = RestClientUtil.postJson(TL_API_URL, body);
 		logger.info("小Q : {}", result.getString("text"));
 		return result;
 	}
@@ -69,7 +61,7 @@ public class WXController {
 		cmdBuilder.append("cd ").append(SILK_V3_DECODER_DIR).append(" && ").append("sh converter.sh ").append(file.getPath()).append(" mp3").append(" && ").append("ffmpeg -i ").append(dataDir).append(userid)
 				.append(".mp3 -acodec pcm_s16le -ac 1 -ar 16000 ").append(dataDir).append(userid).append(".wav");
 		logger.debug("exec shell: {}", cmdBuilder);
-		String[] cmd = new String[] { "/bin/sh", "-c", cmdBuilder.toString() };
+		String[] cmd = new String[]{"/bin/sh", "-c", cmdBuilder.toString()};
 		if (Runtime.getRuntime().exec(cmd).waitFor() != 0) {
 			returnJson.put("code", "-1");
 			return returnJson;
@@ -93,11 +85,7 @@ public class WXController {
 		body.put("speech", base64Data);
 		inputStream.close();
 		wavFile.delete();
-		HttpPost post = new HttpPost(BAIDU_SPEECH_RECOGNITION_URL);
-		post.setHeader(HttpHeaderType.CONTENT_TYPE, "application/json");
-		StringEntity entity = new StringEntity(body.toString(), "utf-8");
-		post.setEntity(entity);
-		JSONObject result = RestClientUtil.executeAsJson(post);
+		JSONObject result = RestClientUtil.postJson(BAIDU_SPEECH_RECOGNITION_URL, body);
 		logger.debug(result.toString());
 		int errNo = result.getInt("err_no");
 		if (errNo == 3301) {
@@ -112,11 +100,7 @@ public class WXController {
 				body.put("key", TL_API_KEY);
 				body.put("info", speechStr);
 				body.put("userid", userid);
-				post = new HttpPost(TL_API_URL);
-				post.setHeader(HttpHeaderType.CONTENT_TYPE, "application/json;charset:utf-8");
-				entity = new StringEntity(body.toString(), "utf-8");
-				post.setEntity(entity);
-				result = RestClientUtil.executeAsJson(post);
+				result = RestClientUtil.postJson(TL_API_URL, body);
 				logger.debug(result.toString());
 				if (result.getInt("code") == 40004) {
 					result.put("text", overTimesAnswer);
@@ -140,5 +124,6 @@ public class WXController {
 		}
 		throw new RuntimeException("Get answer error");
 	}
+
 
 }
