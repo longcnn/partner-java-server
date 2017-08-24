@@ -1,17 +1,16 @@
 package com.zhukai.project.partner.server.schedule;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.http.client.methods.HttpGet;
-import org.json.JSONObject;
-
 import com.zhukai.framework.fast.rest.annotation.core.Component;
-import com.zhukai.framework.fast.rest.annotation.core.Scheduled;
 import com.zhukai.framework.fast.rest.annotation.core.Singleton;
+import com.zhukai.framework.fast.rest.annotation.extend.Scheduled;
 import com.zhukai.project.partner.server.WXConstants;
 import com.zhukai.project.partner.server.util.RestClientException;
 import com.zhukai.project.partner.server.util.RestClientUtil;
+import org.apache.http.client.methods.HttpGet;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Singleton
