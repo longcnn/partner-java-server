@@ -9,9 +9,11 @@ import com.zhukai.project.partner.server.schedule.WXBatcher;
 import com.zhukai.project.partner.server.util.RestClientException;
 import com.zhukai.project.partner.server.util.RestClientUtil;
 import com.zhukai.project.partner.server.wrapper.RestResult;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +42,13 @@ public class WXController {
 
 	@RequestMapping(value = "/robot", method = RequestType.POST)
 	public JSONObject robot(@RequestBody JSONObject body) throws RestClientException, IOException {
-		logger.info("{} : {}", body.getString("username"), body.getString("info"));
+		String username;
+		try {
+			username = body.getString("username");
+		} catch (JSONException je) {
+			username = "unknow";
+		}
+		logger.info("{} : {}", username, body.getString("info"));
 		body.put("key", TL_API_KEY);
 		JSONObject result = RestClientUtil.postJson(TL_API_URL, body);
 		logger.info("小Q : {}", result.getString("text"));
@@ -49,9 +57,9 @@ public class WXController {
 
 	@RequestMapping(value = "/uploadSilk", method = RequestType.POST)
 	public Object uploadSilk(@RequestParam("file") MultipartFile partFile, @RequestParam("userid") MultipartFile useridPart, @RequestParam("username") MultipartFile usernamePart) throws Exception {
-		JSONObject returnJson = new JSONObject();
 		String userid = new String(useridPart.getBytes(), "utf-8");
 		String username = new String(usernamePart.getBytes(), "utf-8");
+		username = StringUtils.isBlank(username) ? "unknow" : username;
 		logger.debug("id = {} ,name = {}", userid, username);
 		String dataDir = FastRestApplication.getStaticPath();
 		File file = new File(dataDir + userid + ".silk");
@@ -63,8 +71,7 @@ public class WXController {
 		logger.debug("exec shell: {}", cmdBuilder);
 		String[] cmd = new String[]{"/bin/sh", "-c", cmdBuilder.toString()};
 		if (Runtime.getRuntime().exec(cmd).waitFor() != 0) {
-			returnJson.put("code", "-1");
-			return returnJson;
+			throw new Exception("shell脚本执行错误");
 		}
 		file.delete();
 		new File(dataDir + userid + ".mp3").delete();

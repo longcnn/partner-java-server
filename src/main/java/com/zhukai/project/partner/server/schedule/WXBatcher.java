@@ -18,7 +18,7 @@ public class WXBatcher {
 
 	private String accessToken;
 
-	@Scheduled(fixedRate = 10, timeUnit = TimeUnit.DAYS)
+	@Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
 	public void requestAccessToken() throws RestClientException, IOException {
 		String url = "https://openapi.baidu.com/oauth/2.0/token?grant_type=client_credentials&client_id=" + WXConstants.BAIDU_API_KEY + "&client_secret=" + WXConstants.BAIDU_SECRET_KEY;
 		HttpGet get = new HttpGet(url);
