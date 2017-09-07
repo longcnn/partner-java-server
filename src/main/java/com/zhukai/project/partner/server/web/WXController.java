@@ -62,7 +62,7 @@ public class WXController {
 		username = StringUtils.isBlank(username) ? "unknow" : username;
 		logger.debug("id = {} ,name = {}", userid, username);
 		String dataDir = FastRestApplication.getStaticPath();
-		File file = new File(dataDir + userid + ".silk");
+		File file = new File(dataDir + "tmp/" + userid + ".silk");
 		partFile.transferTo(file);
 		logger.debug("upload file success, fileName= {}", file.getName());
 		StringBuilder cmdBuilder = new StringBuilder();
@@ -71,11 +71,12 @@ public class WXController {
 		logger.debug("exec shell: {}", cmdBuilder);
 		String[] cmd = new String[]{"/bin/sh", "-c", cmdBuilder.toString()};
 		if (Runtime.getRuntime().exec(cmd).waitFor() != 0) {
+			file.delete();
 			throw new Exception("shell脚本执行错误");
 		}
 		file.delete();
 		new File(dataDir + userid + ".mp3").delete();
-		File wavFile = new File(dataDir + userid + ".wav");
+		File wavFile = new File(dataDir + "tmp/" + userid + ".wav");
 		InputStream inputStream = new FileInputStream(wavFile);
 		byte[] bytes = new byte[(int) wavFile.length()];
 		inputStream.read(bytes);

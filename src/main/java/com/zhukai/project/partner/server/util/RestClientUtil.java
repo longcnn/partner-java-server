@@ -35,7 +35,7 @@ public class RestClientUtil {
 		post.setHeader(HttpHeaderType.CONTENT_TYPE, "application/json;charset:utf-8");
 		StringEntity entity = new StringEntity(body.toString(), "utf-8");
 		post.setEntity(entity);
-		return RestClientUtil.executeAsJson(post);
+		return executeAsJson(post);
 	}
 
 	public static JSONObject executeAsJson(HttpRequestBase request, String charset) throws RestClientException, IOException {

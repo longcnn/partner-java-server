@@ -1,20 +1,18 @@
 package com.zhukai.project.partner.server.util;
 
+import com.zhukai.project.partner.server.wrapper.FileBean;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Zip;
+import org.apache.tools.ant.types.FileSet;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Zip;
-import org.apache.tools.ant.types.FileSet;
-
-import com.zhukai.project.partner.server.wrapper.FileBean;
-
 public class FileUtils {
 	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.0");
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public static File zipCompress(String path) throws FileNotFoundException {
 		File src = new File(path);
@@ -59,7 +57,7 @@ public class FileUtils {
 	}
 
 	private static String displayDate(long time) {
-		return DATE_FORMAT.format(new Date(time));
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time));
 	}
 
 }
