@@ -43,6 +43,9 @@ app.controller('site', function ($scope, $http) {
     }).on("fileuploaded", function (event, data) {
         if (data.response.code === 1) {
             listFile();
+            setTimeout(function () {
+                $(".fileinput-remove").trigger("click");
+            }, 1000);
         } else {
             console.log(data.response);
         }
